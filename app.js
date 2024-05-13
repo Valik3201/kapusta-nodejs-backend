@@ -1,6 +1,10 @@
 const express = require("express");
 const cors = require("cors");
 
+// Podłączenie bazy danych
+const dbConnect = require("./config/db");
+dbConnect();
+
 // Inicjalizacja aplikacji Express
 const app = express();
 
