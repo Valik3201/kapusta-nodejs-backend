@@ -34,12 +34,6 @@ const userSchema = new Schema(
     balance: {
       type: String,
     },
-    transactions: {
-      description: String,
-      category: String,
-      amount: Number,
-      date: String,
-    },
   },
   { versionKey: false, timestamps: true }
 );

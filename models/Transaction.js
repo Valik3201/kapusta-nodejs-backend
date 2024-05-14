@@ -3,41 +3,35 @@ const { Schema, model } = require("mongoose");
 const transactionSchema = new Schema(
   {
     date: {
-      day: {
-        type: Number,
-        required: true,
-        min: 1,
-        max: 31,
-      },
-      month: {
-        type: Number,
-        required: true,
-        min: 0,
-        max: 11,
-      },
-      year: {
-        type: Number,
-        required: true,
-        min: 2024,
-      },
+      type: Date,
+      required: true,
     },
     description: {
-      descriptionName: {
-        type: String,
-        required: true,
-      },
+      type: String,
+      required: true,
     },
     transactionType: {
       type: String,
+      enum: ["income", "expense"],
       required: true,
-      enum: {
-        values: ["income", "expenses"],
-        message: "{VALUE} is not supported",
-      },
     },
     category: {
       type: String,
-      ref: "categories",
+      enum: [
+        "transport",
+        "products",
+        "health",
+        "alcohol",
+        "entertainment",
+        "housing",
+        "technique",
+        "communal, communications",
+        "sports, hobbies",
+        "education",
+        "other",
+        "wages",
+        "income",
+      ],
       required: true,
     },
     amount: {
@@ -45,12 +39,10 @@ const transactionSchema = new Schema(
       required: true,
     },
     userId: {
-      type: String,
-      ref: "users",
+      type: Schema.Types.ObjectId,
+      ref: "user",
       required: true,
     },
-    // newBalance: {
-    // },
   },
   {
     timestamps: true,
