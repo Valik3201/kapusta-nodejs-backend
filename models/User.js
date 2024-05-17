@@ -1,6 +1,6 @@
-const { Schema, model } = require("mongoose");
+const mongoose = require("mongoose");
 
-const userSchema = new Schema(
+const userSchema = new mongoose.Schema(
   {
     email: {
       type: String,
@@ -19,18 +19,6 @@ const userSchema = new Schema(
       type: String,
       default: null,
     },
-    verify: {
-      type: Boolean,
-      default: false,
-    },
-    verificationToken: {
-      type: String,
-      required: [true, "Verify token is required"],
-    },
-    sid: {
-      type: String,
-      default: null,
-    },
     balance: {
       type: String,
     },
@@ -38,6 +26,8 @@ const userSchema = new Schema(
   { versionKey: false, timestamps: true }
 );
 
-const User = model("user", userSchema);
+const User = mongoose.model("Users", userSchema);
 
-module.exports = User;
+module.exports = {
+  User,
+};
