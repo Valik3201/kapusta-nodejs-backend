@@ -22,6 +22,9 @@ const userSchema = new mongoose.Schema(
     balance: {
       type: String,
     },
+    transactions: {
+      type: String,
+    },
   },
   { versionKey: false, timestamps: true }
 );
