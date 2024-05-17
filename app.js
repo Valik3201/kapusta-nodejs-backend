@@ -9,9 +9,10 @@ dbConnect();
 // Inicjalizacja aplikacji Express
 const app = express();
 
+// Logger env
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
-
 app.use(logger(formatsLogger));
+
 // Konfiguracja CORS
 app.use(cors());
 
@@ -20,7 +21,11 @@ app.use(express.json());
 
 // Podłączenie Routerów
 const authRouter = require("./routes/api/auth");
+const userRouter = require("./routes/api/user");
+const transactionRouter = require("./routes/api/transaction");
 app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
+// app.use("/api/transaction", transactionRouter);
 
 // Obsługa nieznanych żądań
 app.use((req, res) => {

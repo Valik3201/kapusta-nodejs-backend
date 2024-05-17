@@ -10,6 +10,11 @@ const authSchema = Joi.object({
   token: Joi.string(),
 });
 
+const balanceSchema = Joi.object({
+  newBalance: Joi.string().required(),
+});
+
 module.exports = {
   authSchema,
+  balanceSchema,
 };
