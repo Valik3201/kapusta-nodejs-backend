@@ -25,7 +25,7 @@ const userRouter = require("./routes/api/user");
 const transactionRouter = require("./routes/api/transaction");
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
-// app.use("/api/transaction", transactionRouter);
+app.use("/api/transaction", transactionRouter);
 
 // Obsługa nieznanych żądań
 app.use((req, res) => {
