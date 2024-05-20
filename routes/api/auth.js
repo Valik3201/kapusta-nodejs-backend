@@ -3,8 +3,9 @@ const router = express.Router();
 const { authCheck } = require("../../middleware/authenticateToken.js");
 const { User } = require("../../models/User.js");
 const { registration, login, logout } = require("../../models/auth.js");
-const { authSchema } = require("../../middleware/validation.js");
+const { authSchema } = require("../../validation/validation.js");
 
+// Rejestracja użytkownika
 router.post("/register", async (req, res, next) => {
   try {
     const { error } = authSchema.validate(req.body);
@@ -21,6 +22,7 @@ router.post("/register", async (req, res, next) => {
   }
 });
 
+// Autoryzacja logowanie
 router.post("/login", async (req, res, next) => {
   try {
     const { error } = authSchema.validate(req.body);
@@ -36,6 +38,7 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
+// Wylogowanie
 router.post("/logout", authCheck, async (req, res, next) => {
   try {
     const result = await logout(req.id);

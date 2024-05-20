@@ -3,8 +3,9 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const { authCheck } = require("../../middleware/authenticateToken.js");
 const { User } = require("../../models/User.js");
-const { balanceSchema } = require("../../middleware/validation.js");
+const { balanceSchema } = require("../../validation/validation.js");
 
+// Aktualizacja bilansu użytkownika
 router.patch("/balance", authCheck, async (req, res, next) => {
   try {
     const { error } = balanceSchema.validate(req.body);

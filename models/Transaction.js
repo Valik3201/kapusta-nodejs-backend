@@ -1,6 +1,6 @@
-const { Schema, model } = require("mongoose");
+const mongoose = require("mongoose");
 
-const transactionSchema = new Schema(
+const transactionSchema = new mongoose.Schema(
   {
     date: {
       type: Date,
@@ -10,7 +10,7 @@ const transactionSchema = new Schema(
       type: String,
       required: true,
     },
-    transactionType: {
+    type: {
       type: String,
       enum: ["income", "expense"],
       required: true,
@@ -32,14 +32,13 @@ const transactionSchema = new Schema(
         "wages",
         "income",
       ],
-      required: true,
     },
     amount: {
       type: Number,
       required: true,
     },
     userId: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Types.ObjectId,
       ref: "user",
       required: true,
     },
@@ -50,6 +49,6 @@ const transactionSchema = new Schema(
   }
 );
 
-const TransactionModel = model("transaction", transactionSchema);
+const Transaction = mongoose.model("transaction", transactionSchema);
 
-module.exports = TransactionModel;
+module.exports = { Transaction };

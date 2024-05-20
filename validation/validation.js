@@ -14,7 +14,16 @@ const balanceSchema = Joi.object({
   newBalance: Joi.string().required(),
 });
 
+const transactionSchema = Joi.object({
+  date: Joi.date().required(),
+  description: Joi.string().required(),
+  type: Joi.string().required(),
+  category: Joi.string(),
+  amount: Joi.number().required(),
+});
+
 module.exports = {
   authSchema,
   balanceSchema,
+  transactionSchema,
 };
