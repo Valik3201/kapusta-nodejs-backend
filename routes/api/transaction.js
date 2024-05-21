@@ -43,7 +43,7 @@ router.post("/income", authCheck, async (req, res, next) => {
     };
 
     res.status(200).json({
-      balance: newBalance,
+      newBalance: newBalance,
       transaction: formattedTransaction,
     });
   } catch (error) {
@@ -81,7 +81,7 @@ router.post("/expense", authCheck, async (req, res, next) => {
     };
 
     res.status(200).json({
-      balance: newBalance,
+      newBalance: newBalance,
       transaction: formattedTransaction,
     });
   } catch (error) {
