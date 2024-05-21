@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const { User } = require("./User");
+const { Transaction } = require("./Transaction");
 const { nanoid } = require("nanoid");
 
 const registration = async (body) => {
@@ -28,30 +29,54 @@ const login = async (body) => {
     const { email, password } = body;
     const findUser = await User.findOne({ email });
 
-    if (!findUser) return "Email doesn't exist";
-    if (!(await bcrypt.compare(password, findUser.password)))
-      return "Password is wrong";
+    if (!findUser) {
+      console.error("Login error: Email doesn't exist");
+      return null;
+    }
 
-    const token = jwt.sign(
-      {
-        _id: findUser._id,
-      },
-      process.env.JWT_SECRET
+    const isPasswordValid = await bcrypt.compare(password, findUser.password);
+    if (!isPasswordValid) {
+      console.error("Login error: Password is wrong");
+      return null;
+    }
+
+    const accessToken = jwt.sign(
+      { _id: findUser._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
     );
-    await User.updateOne({ _id: findUser.id }, { token });
+    const refreshToken = jwt.sign(
+      { _id: findUser._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+    await User.updateOne({ _id: findUser.id }, { token: refreshToken });
+
+    const transactions = await Transaction.find({ userId: findUser._id });
+
+    const formattedTransactions = transactions.map((transaction) => ({
+      description: transaction.description,
+      amount: transaction.amount,
+      date: transaction.date.toISOString().split("T")[0],
+      category: transaction.category,
+      _id: transaction._id,
+    }));
+
     const user = {
-      accessToken: findUser.token,
-      refreshToken: token,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      sid: findUser._id.toString(),
       userData: {
         email: findUser.email,
         balance: findUser.balance,
-        id: findUser.id,
-        transactions: "transactions list",
+        id: findUser._id.toString(),
+        transactions: formattedTransactions,
       },
     };
     return user;
   } catch (error) {
-    console.log("error", error.message);
+    console.error("Login function error:", error.message);
+    return null;
   }
 };
 
