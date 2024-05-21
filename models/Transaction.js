@@ -1,5 +1,21 @@
 const mongoose = require("mongoose");
 
+const incomeCategories = ["Salary", "Additional Income"];
+
+const expenseCategories = [
+  "Products",
+  "Alcohol",
+  "Entertainment",
+  "Health",
+  "Transport",
+  "Housing",
+  "Technology",
+  "Utilities and Communication",
+  "Sports and Hobbies",
+  "Education",
+  "Other",
+];
+
 const transactionSchema = new mongoose.Schema(
   {
     date: {
@@ -17,21 +33,8 @@ const transactionSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: [
-        "transport",
-        "products",
-        "health",
-        "alcohol",
-        "entertainment",
-        "housing",
-        "technique",
-        "communal, communications",
-        "sports, hobbies",
-        "education",
-        "other",
-        "wages",
-        "income",
-      ],
+      enum: [...incomeCategories, ...expenseCategories],
+      required: true,
     },
     amount: {
       type: Number,
@@ -51,4 +54,4 @@ const transactionSchema = new mongoose.Schema(
 
 const Transaction = mongoose.model("transaction", transactionSchema);
 
-module.exports = { Transaction };
+module.exports = { Transaction, incomeCategories, expenseCategories };
