@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const incomeCategories = ["Salary", "Additional Income"];
+const incomeCategories = ["Salary", "Add Income"];
 
 const expenseCategories = [
   "Products",
@@ -9,9 +9,9 @@ const expenseCategories = [
   "Health",
   "Transport",
   "Housing",
-  "Technology",
-  "Utilities and Communication",
-  "Sports and Hobbies",
+  "Technique",
+  "Communal and Communications",
+  "Hobbies Sports",
   "Education",
   "Other",
 ];
