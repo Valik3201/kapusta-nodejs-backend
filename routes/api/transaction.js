@@ -13,21 +13,26 @@ const {
 } = require("../../controllers/transactionsByDate.js");
 const { User } = require("../../models/User.js");
 
-// Dodanie dochodu
 router.post("/income", authCheck, async (req, res, next) => {
   try {
     const { _id, balance } = req.user;
-    const { type, amount } = req.body;
+    const { amount } = req.body;
 
     const { error } = transactionSchema.validate(req.body);
     if (error)
       return res.status(400).json({ message: error.details[0].message });
 
-    const result = await Transaction.create({ ...req.body, userId: _id });
+    const type = "income";
+    const newTransaction = { ...req.body, userId: _id, type };
 
-    const newBalance = type === "income" ? balance + amount : balance - amount;
+    const result = await Transaction.create(newTransaction);
 
-    await User.findByIdAndUpdate(_id, { balance: newBalance });
+    const newBalance = balance + amount;
+
+    await User.findByIdAndUpdate(_id, {
+      $push: { transactions: result._id },
+      balance: newBalance,
+    });
 
     res.status(200).json({
       balance: newBalance,
@@ -38,21 +43,26 @@ router.post("/income", authCheck, async (req, res, next) => {
   }
 });
 
-// Dodanie wydatku
 router.post("/expense", authCheck, async (req, res, next) => {
   try {
     const { _id, balance } = req.user;
-    const { type, amount } = req.body;
+    const { amount } = req.body;
 
     const { error } = transactionSchema.validate(req.body);
     if (error)
       return res.status(400).json({ message: error.details[0].message });
 
-    const result = await Transaction.create({ ...req.body, userId: _id });
+    const type = "expense";
+    const newTransaction = { ...req.body, userId: _id, type };
 
-    const newBalance = type === "expense" ? balance - amount : balance + amount;
+    const result = await Transaction.create(newTransaction);
 
-    await User.findByIdAndUpdate(_id, { balance: newBalance });
+    const newBalance = balance - amount;
+
+    await User.findByIdAndUpdate(_id, {
+      $push: { transactions: result._id },
+      balance: newBalance,
+    });
 
     res.status(200).json({
       balance: newBalance,
@@ -70,11 +80,15 @@ router.delete("/:transactionId", authCheck, async (req, res, next) => {
     const { _id, balance } = req.user;
 
     const { type, amount } = await Transaction.findByIdAndDelete(transactionId);
+
     if (!amount) return res.status(404).json({ message: "Not Found" });
 
     const newBalance = type === "income" ? balance - amount : balance + amount;
 
-    await User.findByIdAndUpdate({ _id }, { balance: newBalance });
+    await User.findByIdAndUpdate(_id, {
+      $pull: { transactions: transactionId },
+      balance: newBalance,
+    });
 
     res.json({
       message: "Transaction Deleted",
@@ -93,30 +107,54 @@ router.get("/income", authCheck, async (req, res, next) => {
     const tokenCheck = jwt.decode(token, process.env.JWT_SECRET);
     const user = await User.findById(tokenCheck._id);
 
-    const actualYear = new Date().getYear();
-
     if (!user) {
       return res.status(404).json({ message: "User not Found" });
     }
 
+    const actualYear = new Date().getFullYear();
     const transactions = await Transaction.find({ userId: tokenCheck._id });
 
-    const transactionsByMonthAndYear = transactions.filter(({ date }) => {
-      return date.getYear() === actualYear;
+    const incomeTransactions = transactions.filter(({ date, type }) => {
+      return date.getFullYear() === actualYear && type === "income";
     });
 
-    const incomeTransactions = transactionsByMonthAndYear.filter(
-      ({ type }) => type === "income"
-    );
-    const totalIncome = incomeTransactions.reduce(
-      (prevValue, { amount }) => prevValue + amount,
-      0
-    );
-    const transactionObj = {
-      incomeTransactions,
-      totalIncome,
+    const monthStats = {
+      January: "N/A",
+      February: "N/A",
+      March: "N/A",
+      April: "N/A",
+      May: "N/A",
+      June: "N/A",
+      July: "N/A",
+      August: "N/A",
+      September: "N/A",
+      October: "N/A",
+      November: "N/A",
+      December: "N/A",
     };
-    res.json(transactionObj);
+
+    const incomes = incomeTransactions.map(
+      ({ description, amount, date, category, _id }) => {
+        const month = date.toLocaleString("default", { month: "long" });
+        if (monthStats[month] === "N/A") {
+          monthStats[month] = amount;
+        } else {
+          monthStats[month] += amount;
+        }
+        return {
+          description,
+          amount,
+          date: date.toISOString().split("T")[0],
+          category,
+          _id,
+        };
+      }
+    );
+
+    res.json({
+      incomes,
+      monthStats,
+    });
   } catch (error) {
     next(error);
   }
@@ -130,31 +168,54 @@ router.get("/expense", authCheck, async (req, res, next) => {
     const tokenCheck = jwt.decode(token, process.env.JWT_SECRET);
     const user = await User.findById(tokenCheck._id);
 
-    const actualYear = new Date().getYear();
-
     if (!user) {
       return res.status(404).json({ message: "User not Found" });
     }
 
+    const actualYear = new Date().getFullYear();
     const transactions = await Transaction.find({ userId: tokenCheck._id });
 
-    const transactionsByMonthAndYear = transactions.filter(({ date }) => {
-      return date.getYear() === actualYear;
+    const expenseTransactions = transactions.filter(({ date, type }) => {
+      return date.getFullYear() === actualYear && type === "expense";
     });
 
-    const expenseTransactions = transactionsByMonthAndYear.filter(
-      ({ type }) => type === "expense"
+    const monthStats = {
+      January: "N/A",
+      February: "N/A",
+      March: "N/A",
+      April: "N/A",
+      May: "N/A",
+      June: "N/A",
+      July: "N/A",
+      August: "N/A",
+      September: "N/A",
+      October: "N/A",
+      November: "N/A",
+      December: "N/A",
+    };
+
+    const expenses = expenseTransactions.map(
+      ({ description, amount, date, category, _id }) => {
+        const month = date.toLocaleString("default", { month: "long" });
+        if (monthStats[month] === "N/A") {
+          monthStats[month] = amount;
+        } else {
+          monthStats[month] += amount;
+        }
+        return {
+          description,
+          amount,
+          date: date.toISOString().split("T")[0],
+          category,
+          _id,
+        };
+      }
     );
 
-    const totalExpense = expenseTransactions.reduce(
-      (prevValue, { amount }) => prevValue + amount,
-      0
-    );
-    const transactionObj = {
-      expenseTransactions,
-      totalExpense,
-    };
-    res.json(transactionObj);
+    res.json({
+      expenses,
+      monthStats,
+    });
   } catch (error) {
     next(error);
   }
@@ -205,6 +266,6 @@ router.get("/expense-categories", authCheck, async (req, res, next) => {
 });
 
 // Otrzymywanie szczegółowych informacji o wydatkach i przychodach za określony miesiąc i rok
-router.get("/period-data/:year/:month", authCheck, transactionsByDate);
+router.get("/period-data", authCheck, transactionsByDate);
 
 module.exports = router;
