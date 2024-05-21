@@ -2,7 +2,11 @@ const express = require("express");
 const router = express.Router();
 const { authCheck } = require("../../middleware/authenticateToken.js");
 const jwt = require("jsonwebtoken");
-const { Transaction } = require("../../models/Transaction.js");
+const {
+  Transaction,
+  incomeCategories,
+  expenseCategories,
+} = require("../../models/Transaction.js");
 const { transactionSchema } = require("../../validation/validation.js");
 const {
   transactionsByDate,
@@ -151,6 +155,50 @@ router.get("/expense", authCheck, async (req, res, next) => {
       totalExpense,
     };
     res.json(transactionObj);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/income-categories", authCheck, async (req, res, next) => {
+  try {
+    const { authorization } = req.headers;
+    if (!authorization)
+      return res.status(400).json({ message: "No token provided" });
+
+    const [, token] = authorization.split(" ");
+    const tokenCheck = jwt.decode(token, process.env.JWT_SECRET);
+    if (!tokenCheck) return res.status(401).json({ message: "Unauthorized" });
+
+    const user = await User.findById(tokenCheck._id);
+    if (!user)
+      return res
+        .status(404)
+        .json({ message: "Invalid user / Invalid session" });
+
+    res.status(200).json(incomeCategories);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/expense-categories", authCheck, async (req, res, next) => {
+  try {
+    const { authorization } = req.headers;
+    if (!authorization)
+      return res.status(400).json({ message: "No token provided" });
+
+    const [, token] = authorization.split(" ");
+    const tokenCheck = jwt.decode(token, process.env.JWT_SECRET);
+    if (!tokenCheck) return res.status(401).json({ message: "Unauthorized" });
+
+    const user = await User.findById(tokenCheck._id);
+    if (!user)
+      return res
+        .status(404)
+        .json({ message: "Invalid user / Invalid session" });
+
+    res.status(200).json(expenseCategories);
   } catch (error) {
     next(error);
   }
