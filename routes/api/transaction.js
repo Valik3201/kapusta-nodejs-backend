@@ -25,9 +25,17 @@ router.post("/income", authCheck, async (req, res, next) => {
 
     await User.findByIdAndUpdate(_id, { balance: newBalance });
 
+    const formattedTransaction = {
+      description: result.description,
+      amount: result.amount,
+      date: result.date.toISOString().split("T")[0],
+      category: result.category,
+      _id: result._id,
+    };
+
     res.status(200).json({
       balance: newBalance,
-      transaction: result,
+      transaction: formattedTransaction,
     });
   } catch (error) {
     next(error);
@@ -50,9 +58,17 @@ router.post("/expense", authCheck, async (req, res, next) => {
 
     await User.findByIdAndUpdate(_id, { balance: newBalance });
 
+    const formattedTransaction = {
+      description: result.description,
+      amount: result.amount,
+      date: result.date.toISOString().split("T")[0],
+      category: result.category,
+      _id: result._id,
+    };
+
     res.status(200).json({
       balance: newBalance,
-      transaction: result,
+      transaction: formattedTransaction,
     });
   } catch (error) {
     next(error);
