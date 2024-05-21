@@ -20,8 +20,14 @@ const userSchema = new mongoose.Schema(
       default: null,
     },
     balance: {
-      type: String,
+      type: Number,
     },
+    transactions: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "transaction",
+      },
+    ],
   },
   { versionKey: false, timestamps: true }
 );
