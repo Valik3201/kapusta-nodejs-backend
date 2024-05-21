@@ -1,4 +1,8 @@
 const Joi = require("joi");
+const {
+  incomeCategories,
+  expenseCategories,
+} = require("../models/Transaction.js");
 
 const authSchema = Joi.object({
   email: Joi.string()
@@ -11,14 +15,15 @@ const authSchema = Joi.object({
 });
 
 const balanceSchema = Joi.object({
-  newBalance: Joi.string().required(),
+  newBalance: Joi.number().required(),
 });
 
 const transactionSchema = Joi.object({
   date: Joi.date().required(),
   description: Joi.string().required(),
-  type: Joi.string().required(),
-  category: Joi.string(),
+  category: Joi.string()
+    .valid(...incomeCategories, ...expenseCategories)
+    .required(),
   amount: Joi.number().required(),
 });
 
