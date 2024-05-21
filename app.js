@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const logger = require("morgan");
+const path = require("path");
 
 // Podłączenie bazy danych
 const dbConnect = require("./config/db");
@@ -26,6 +27,8 @@ const transactionRouter = require("./routes/api/transaction");
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/transaction", transactionRouter);
+
+app.use(express.static(path.join(__dirname, "public")));
 
 // Obsługa nieznanych żądań
 app.use((req, res) => {
