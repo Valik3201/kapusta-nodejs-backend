@@ -25,7 +25,7 @@ Kapusta Financial Tracker API is a backend application for managing financial tr
 
 To get a local copy up and running, follow these steps.
 
-## Prerequisites
+### Prerequisites
 
 Ensure you have the following installed on your machine:
 
@@ -33,12 +33,12 @@ Ensure you have the following installed on your machine:
 - npm (v6 or later)
 - MongoDB (local or hosted)
 
-## Installation
+### Installation
 
 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/kapusta-nodejs-server.git
+git clone https://github.com/valik3201/kapusta-nodejs-server.git
 cd kapusta-nodejs-server
 ```
 
@@ -48,7 +48,7 @@ cd kapusta-nodejs-server
 npm install
 ```
 
-## Environment Configuration
+### Environment Configuration
 
 Create a `.env` file in the root directory and add the following variables:
 
@@ -58,7 +58,7 @@ DB_URL=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 ```
 
-## Running the Application
+### Running the Application
 
 To start the application in development mode, use:
 
