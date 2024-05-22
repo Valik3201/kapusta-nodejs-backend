@@ -10,11 +10,15 @@ const authCheck = async (req, res, next) => {
 
   const [, token] = authorization.split(" ");
   const tokenCheck = jwt.decode(token, process.env.JWT_SECRET);
-  if (!tokenCheck) {
+  if (!tokenCheck || !tokenCheck._id) {
     return res.status(401).json({ message: "Not authorized" });
   }
 
   const user = await User.findById(tokenCheck._id);
+
+  if (!user) {
+    return res.status(401).json({ message: "Not authorized" });
+  }
 
   req.token = token;
   req.user = user;
