@@ -7,7 +7,7 @@ const dbConnect = async () => {
     console.log("Database connection successful");
     console.log(
       "You are logged in database:",
-      await mongoose.connection.db.databaseName
+      mongoose.connection.db.databaseName
     );
   } catch (e) {
     console.error("Database connection error:", e);
