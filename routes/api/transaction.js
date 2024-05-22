@@ -89,7 +89,6 @@ router.post("/expense", authCheck, async (req, res, next) => {
   }
 });
 
-// Usunięcie transakcji
 router.delete("/:transactionId", authCheck, async (req, res, next) => {
   try {
     const { transactionId } = req.params;
@@ -115,7 +114,6 @@ router.delete("/:transactionId", authCheck, async (req, res, next) => {
   }
 });
 
-// Otrzymanie zestawienia o miesiącach bieżącego roku w odniesieniu do dochodów
 router.get("/income", authCheck, async (req, res, next) => {
   try {
     const { authorization } = req.headers;
@@ -176,7 +174,6 @@ router.get("/income", authCheck, async (req, res, next) => {
   }
 });
 
-// Otrzymanie zestawienia o miesiącach bieżącego roku w odniesieniu do wydatków
 router.get("/expense", authCheck, async (req, res, next) => {
   try {
     const { authorization } = req.headers;
@@ -281,7 +278,6 @@ router.get("/expense-categories", authCheck, async (req, res, next) => {
   }
 });
 
-// Otrzymywanie szczegółowych informacji o wydatkach i przychodach za określony miesiąc i rok
 router.get("/period-data", authCheck, transactionsByDate);
 
 module.exports = router;
