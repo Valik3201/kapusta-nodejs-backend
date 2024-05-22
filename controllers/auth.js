@@ -1,8 +1,8 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const { User } = require("./User");
-const { Transaction } = require("./Transaction");
+const { User } = require("../models/User");
+const { Transaction } = require("../models/Transaction");
 const { nanoid } = require("nanoid");
 
 const registration = async (body) => {
@@ -12,7 +12,7 @@ const registration = async (body) => {
       email,
       password: await bcrypt.hash(password, 10),
       token: nanoid(),
-      balance: "0",
+      balance: 0,
     });
 
     await user.save();
@@ -20,7 +20,7 @@ const registration = async (body) => {
     const newUser = { email: user.email };
     return newUser;
   } catch (error) {
-    console.log("error", error.message);
+    console.log("Registration error:", error);
   }
 };
 
@@ -34,7 +34,7 @@ const login = async (body) => {
       return null;
     }
 
-    const isPasswordValid = await bcrypt.compare(password, findUser.password);
+    const isPasswordValid = bcrypt.compare(password, findUser.password);
     if (!isPasswordValid) {
       console.error("Login error: Password is wrong");
       return null;
@@ -75,21 +75,12 @@ const login = async (body) => {
     };
     return user;
   } catch (error) {
-    console.error("Login function error:", error.message);
+    console.error("Login error:", error);
     return null;
-  }
-};
-
-const logout = async (userId) => {
-  try {
-    return (result = await User.updateOne({ _id: userId }, { token: null }));
-  } catch (error) {
-    console.log("error", error.message);
   }
 };
 
 module.exports = {
   registration,
   login,
-  logout,
 };
