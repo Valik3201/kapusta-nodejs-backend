@@ -2,10 +2,9 @@ const express = require("express");
 const router = express.Router();
 const { authCheck } = require("../../middleware/authenticateToken.js");
 const { User } = require("../../models/User.js");
-const { registration, login, logout } = require("../../models/auth.js");
+const { registration, login } = require("../../controllers/auth.js");
 const { authSchema } = require("../../validation/validation.js");
 
-// Rejestracja użytkownika
 router.post("/register", async (req, res, next) => {
   try {
     const { error } = authSchema.validate(req.body);
@@ -22,7 +21,6 @@ router.post("/register", async (req, res, next) => {
   }
 });
 
-// Autoryzacja logowanie
 router.post("/login", async (req, res, next) => {
   try {
     const { error } = authSchema.validate(req.body);
@@ -35,18 +33,21 @@ router.post("/login", async (req, res, next) => {
 
     res.status(200).json(result);
   } catch (error) {
-    console.error("Login error:", error.message);
     next(error);
   }
 });
 
-// Wylogowanie
 router.post("/logout", authCheck, async (req, res, next) => {
   try {
-    const result = await logout(req.id);
-    if (!result) return res.status(401).json({ message: "Not authorized" });
+    if (!req.id) return res.status(400).json({ message: "No token provided" });
 
-    res.status(204).json({ message: "No Content" });
+    const result = await User.updateOne({ _id: req.id }, { token: null });
+    if (!result)
+      return res
+        .status(404)
+        .json({ message: "Invalid user / Invalid session" });
+
+    res.status(204).json({ message: "Successful operation" });
   } catch (error) {
     next(error);
   }
