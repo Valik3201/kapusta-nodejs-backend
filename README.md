@@ -9,6 +9,22 @@ Kapusta Financial Tracker API is a backend application for managing financial tr
 ![JSON Web Tokens Badge](https://img.shields.io/badge/JSON%20Web%20Tokens-000?logo=jsonwebtokens&logoColor=fff&style=flat)
 ![.ENV Badge](https://img.shields.io/badge/.ENV-ECD53F?logo=dotenv&logoColor=000&style=flat)
 
+## Overview
+
+Kapusta Backend offers a robust set of API endpoints to interact with the financial management system. With this backend server, users can:
+
+- **Register and Authenticate Users:** Allow users to register accounts and securely authenticate them using JWT tokens.
+- **Manage Transactions:** Provide endpoints to add, delete, and retrieve transactions, including income and expenses.
+- **Retrieve User Data:** Enable users to fetch their account information, including balance and transaction history.
+- **Manage Budgets:** Implement functionality to set and update budgets for different expense categories.
+
+## Documentation
+
+Explore the API endpoints and detailed documentation using [Swagger](https://app.swaggerhub.com/apis-docs/VALIK3201/Kapusta/1.0.0#/) for a comprehensive understanding of the server capabilities.
+
+> [!NOTE]  
+> Please be aware that the server responses may experience delays of 50 seconds or more due to inactivity.
+
 ## Built With
 
 - **Node.js** - JavaScript runtime built on Chrome's V8 JavaScript engine
