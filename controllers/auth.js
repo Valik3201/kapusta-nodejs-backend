@@ -27,6 +27,7 @@ const registration = async (body) => {
 const login = async (body) => {
   try {
     const { email, password } = body;
+
     const findUser = await User.findOne({ email });
 
     if (!findUser) {
@@ -34,7 +35,7 @@ const login = async (body) => {
       return null;
     }
 
-    const isPasswordValid = bcrypt.compare(password, findUser.password);
+    const isPasswordValid = await bcrypt.compare(password, findUser.password);
     if (!isPasswordValid) {
       console.error("Login error: Password is wrong");
       return null;
