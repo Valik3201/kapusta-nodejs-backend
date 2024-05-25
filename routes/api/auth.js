@@ -27,9 +27,9 @@ router.post("/login", async (req, res, next) => {
     if (error)
       return res.status(400).json({ message: error.details[0].message });
 
-    const result = await login(req.body);
+    const result = await login(req.body, res);
     if (!result)
-      return res.status(401).json({ message: "Email or password is wrong" });
+      return res.status(403).json({ message: "Email or password is wrong" });
 
     res.status(200).json(result);
   } catch (error) {
